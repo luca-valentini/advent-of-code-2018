@@ -42,6 +42,51 @@ func checkTwoAndThree(occurrencies map[rune]int) (int, int) {
 	return two, three
 }
 
+func partOne(boxIDs []string) int {
+	twoCount := 0
+	threeCount := 0
+	for _, boxID := range boxIDs {
+		two, three := checkTwoAndThree(countOccurrencies(boxID))
+		twoCount = twoCount + two
+		threeCount = threeCount + three
+	}
+
+	return twoCount * threeCount
+}
+
+func almostEqual(first, second string) (bool, string) {
+	found := false
+	common := ""
+	for i := 0; i < len(first); i++ {
+		if first[i] != second[i] {
+			if found == false {
+				common = string(append([]rune(second)[:i], []rune(second)[i+1:]...))
+				found = true
+			} else {
+				found = false
+				break
+			}
+		}
+	}
+	return found, string(common)
+}
+
+func partTwo(boxIDs []string) string {
+
+	found := false
+	result := ""
+
+	for _, first := range boxIDs {
+		for _, second := range boxIDs {
+			found, result = almostEqual(first, second)
+			if found == true {
+				return result
+			}
+		}
+	}
+	return ""
+}
+
 func main() {
 
 	input, err := os.Open("input")
@@ -50,15 +95,14 @@ func main() {
 	}
 
 	scanner := bufio.NewScanner(input)
+	boxIDs := parseEntries(scanner)
 
-	twoCount := 0
-	threeCount := 0
-	for _, boxID := range parseEntries(scanner) {
-		two, three := checkTwoAndThree(countOccurrencies(boxID))
-		twoCount = twoCount + two
-		threeCount = threeCount + three
-	}
+	checksum := partOne(boxIDs)
 
-	checksum := twoCount * threeCount
 	fmt.Println(checksum)
+
+	common := partTwo(boxIDs)
+
+	fmt.Println(common)
+
 }
