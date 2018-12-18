@@ -45,6 +45,35 @@ func partOne(entries map[int]entry) int {
 	return counter
 }
 
+func partTwo(entries map[int]entry) int {
+
+	var land matrix
+	ids := map[int]bool{}
+
+	for id, entry := range entries {
+		append := true
+		for x := 0; x < entry.width; x++ {
+			for y := 0; y < entry.height; y++ {
+				if land[x+entry.x][y+entry.y] != 0 {
+					append = false
+					delete(ids, land[x+entry.x][y+entry.y])
+				}
+				land[x+entry.x][y+entry.y] = id
+			}
+		}
+		if append == true {
+			ids[id] = true
+		}
+
+	}
+
+	result := 0
+	for id := range ids {
+		result = id
+	}
+	return result
+}
+
 func main() {
 	input, err := os.Open("input")
 	if err != nil {
@@ -56,4 +85,7 @@ func main() {
 
 	count := partOne(entries)
 	fmt.Println(count)
+
+	id := partTwo(entries)
+	fmt.Println(id)
 }
